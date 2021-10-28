@@ -1,0 +1,23 @@
+ANALISIS DEL DNS EN WINDOWS
+function Set-DNSWINS {
+#Get NICS via WMI
+$NICs = Get-WmiObject '
+-Class Win32_NetworkAdapterConfiguration '
+-ComputerName $_ '
+-Filter "IPEnabled=TRUE"
+
+foreach($NIC in $NICs) {
+$DNSServers = "IP.IP.IP.IP","IP.IP.IP.IP"
+$NIC.SetDNSServerSearchOrder($DNSServers)
+$NIC.SetDynamicDNSRegistration("TRUE")
+$NIC.SetWINSServer("12.345.67.890", "12.345.67.891")
+}
+}
+
+function Get-FileName {
+$computer = Read-Host "Filename of computer names?"
+return $computer
+}
+
+$f = Get-FileName
+Get-Content $f foreach {Set-DNSWINS}
